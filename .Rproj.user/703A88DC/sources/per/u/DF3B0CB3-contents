@@ -1,0 +1,15 @@
+getwd()
+
+obs <- read_delim("data/wy_plant.csv")
+
+vroom::problems(obs, lazy=F)
+
+obs %>% 
+  select(species, decimalLatitude, decimalLongitude) %>% 
+  tidyr::drop_na() -> df
+
+df %>% mutate(lat = decimalLatitude, lon = decimalLongitude) %>% 
+  st_as_sf(coords = c("decimalLatitude","decimalLongitude"), crs = 4326) %>% st_drop_geometry() -> df
+
+
+write.csv(df, "CASLIN.csv")
