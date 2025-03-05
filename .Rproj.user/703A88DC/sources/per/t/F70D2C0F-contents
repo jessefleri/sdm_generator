@@ -54,7 +54,7 @@ server <- function(input, output, session) {
   
   output$dataPreview <- renderTable({
     req(species_data())
-    head(species_data(), 5)
+    head(species_data(), 10)
   })
   
   observeEvent(input$runModel, {
@@ -80,7 +80,7 @@ server <- function(input, output, session) {
         bio_crop <- crop(bio, ext(min_lon, max_lon, min_lat, max_lat))
         bioclim_list[[var]] <- bio_crop
       }
-      
+
       # Get elevation data if requested
       if(input$includeElevation) {
         incProgress(0.4, detail = "Downloading elevation data")
@@ -110,6 +110,9 @@ server <- function(input, output, session) {
       # Combine data and train model
       model_data <- rbind(occurrence_data, bg_data)
       model_data <- na.omit(model_data)
+      model_data$presence <- factor(model_data$presence)
+      
+      print(names(env_stack))
       
       incProgress(0.8, detail = "Training random forest model")
       model_formula <- as.formula(paste("presence ~", paste(names(env_stack), collapse = " + ")))
@@ -164,11 +167,11 @@ server <- function(input, output, session) {
     
     # Make variable names more readable
     var_imp_df$Variable <- recode(var_imp_df$Variable,
-                                  "bio1" = "Annual Mean Temperature",
-                                  "bio5" = "Max Temp Warmest Month",
-                                  "bio6" = "Min Temp Coldest Month",
-                                  "bio12" = "Annual Precipitation",
-                                  "elevation" = "Elevation")
+                                  "tavg" = "Annual Mean Temperature",
+                                  "tmax" = "Max Temp Warmest Month",
+                                  "tmin" = "Min Temp Coldest Month",
+                                  "prec" = "Annual Precipitation")
+                                  # "elevation" = "Elevation")
     
     ggplot(var_imp_df, aes(x = reorder(Variable, MeanDecreaseAccuracy), y = MeanDecreaseAccuracy)) +
       geom_bar(stat = "identity", fill = "steelblue") +

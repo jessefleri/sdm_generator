@@ -1,14 +1,14 @@
 # Species Distribution Model Builder
 # A Shiny app that creates random forest-based SDMs from presence-only data
 
-# library(dismo)
+library(dismo)
 library(shiny)
 library(bslib)
 library(dplyr)
 library(readr)
 library(randomForest)
 library(leaflet)
-# library(raster)
+library(raster)
 library(sf)
 library(geodata)
 
