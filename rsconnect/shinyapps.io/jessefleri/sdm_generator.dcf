@@ -1,0 +1,13 @@
+name: sdm_generator
+title: sdm_generator
+username: jessefleri
+account: jessefleri
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14255532
+bundleId: 9950361
+url: https://jessefleri.shinyapps.io/sdm_generator/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data/CASLIN.csv|data/wy_plant.csv

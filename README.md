@@ -2,7 +2,7 @@
  
 R shiny application to create species distribution models from user data. Future iterations of this application will *hopefully* integrate a prompt style chatbot that will automate data scraping from existing APIs that serve ecological occurence data.
 
-Link to project: TBD
+Link to project: https://jessefleri.shinyapps.io/sdm_generator/
 
 How It's Made: `R` 
 
