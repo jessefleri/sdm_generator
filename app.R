@@ -1,6 +1,3 @@
-# Species Distribution Model Builder
-# A Shiny app that creates random forest-based SDMs from presence-only data
-
 library(shiny)
 library(bslib)
 library(dplyr)
@@ -11,7 +8,7 @@ library(sf)
 library(geodata)
 
 ui <- page_sidebar(
-  title = "Species Distribution Model Builder",
+  title = "Species Distribution Model Generator",
   theme = bs_theme(bootswatch = "flatly", primary = "#3e8d63"),
   sidebar = sidebar(
     width = 300,
@@ -87,7 +84,7 @@ server <- function(input, output, session) {
         lat = ~lat,
         radius = 5,
         color = "#ff7f00",
-        fillOpacity = 0.8,
+        fillOpacity = 0.5,
         stroke = FALSE,
         popup = ~ paste(
           "<b>Species:</b>", species,
