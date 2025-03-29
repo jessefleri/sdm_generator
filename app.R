@@ -4,8 +4,10 @@ library(dplyr)
 library(readr)
 library(ranger)
 library(leaflet)
+library(terra)
 library(sf)
-library(geodata)
+
+bioclim_lookup <- read.csv("data/bioclim_lookup.csv")
 
 ui <- page_sidebar(
   title = "Species Distribution Model Generator",
@@ -16,16 +18,12 @@ ui <- page_sidebar(
     selectInput("species_col", "Species column", choices = NULL),
     selectInput("lat_col", "Latitude column", choices = NULL),
     selectInput("lon_col", "Longitude column", choices = NULL),
-    checkboxGroupInput(
+    selectizeInput(
       "bioclim_vars",
       "Bioclim Variables:",
-      choices = c(
-        "Annual Mean Temperature" = "bio_1",
-        "Annual Precipitation" = "bio_12",
-        "Max Temperature of Warmest Month" = "bio_5",
-        "Min Temperature of Coldest Month" = "bio_6"
-      ),
-      selected = c("bio_1", "bio_12")
+      choices = bioclim_lookup$defs,
+      selected = NULL,
+      multiple = TRUE
     ),
     numericInput("ntree", "Number of trees:", 500, min = 100, max = 2000),
     actionButton("run_model", "Run Model", class = "btn-success btn-lg w-100")
@@ -107,8 +105,7 @@ server <- function(input, output, session) {
       presence_pts <- data.frame(
         species = data[[input$species_col]],
         lon = data[[input$lon_col]],
-        lat = data[[input$lat_col]]
-      ) %>%
+        lat = data[[input$lat_col]]) %>%
         st_as_sf(coords = c("lon", "lat"), crs = 4326)
 
       coords <- data %>%
@@ -121,20 +118,19 @@ server <- function(input, output, session) {
       min_lat <- min(coords$lat) - 1
       max_lat <- max(coords$lat) + 1
 
+      study_extent <- terra::ext(min_lon, max_lon, min_lat, max_lat)
 
-      study_extent <- ext(min_lon, max_lon, min_lat, max_lat)
       # Get environmental data
       incProgress(0.3, detail = "Downloading environmental data")
       tryCatch(
         {
           bioclim_list <- list()
 
-          bio <- worldclim_global(var = "bio", res = 10, path = tempdir())
+          bio <- unwrap(readRDS("data/bioclim_stack.RDS"))
+          
+          clim_vars <- bioclim_lookup |> filter(defs %in% input$bioclim_vars)
 
-          bio <- bio[[c(1, 5, 6, 12)]]
-          names(bio) <- stringr::str_remove_all(names(bio), "wc2.1_10m_")
-
-          bio_filter <- bio[[c(input$bioclim_vars)]]
+          bio_filter <- bio[[c(clim_vars$bios)]]
           env_stack <- crop(bio_filter, study_extent)
 
           # Generate pseudo-absence points
@@ -213,14 +209,16 @@ server <- function(input, output, session) {
         color = "black",
         fillColor = "yellow",
         fillOpacity = 1,
-        weight = 1
+        weight = 1,
+        group = "observations"
       ) %>%
       addLegend(
         position = "bottomright",
         pal = pal,
         values = c(0, 1),
         title = "Probability of Presence"
-      )
+      ) |> 
+      addLayersControl(overlayGroups = "observations")
   })
 
   # Variable importance plot

@@ -1071,36 +1071,6 @@
       ],
       "Hash": "d9ff3b753db98bc50650314c8782abe6"
     },
-    "stringi": {
-      "Package": "stringi",
-      "Version": "1.8.4",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "stats",
-        "tools",
-        "utils"
-      ],
-      "Hash": "39e1144fd75428983dc3f63aa53dfa91"
-    },
-    "stringr": {
-      "Package": "stringr",
-      "Version": "1.5.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "cli",
-        "glue",
-        "lifecycle",
-        "magrittr",
-        "rlang",
-        "stringi",
-        "vctrs"
-      ],
-      "Hash": "960e2ae9e09656611e0b8214ad543207"
-    },
     "sys": {
       "Package": "sys",
       "Version": "3.4.3",
