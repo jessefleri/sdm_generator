@@ -6,8 +6,8 @@ library(ranger)
 library(leaflet)
 library(terra)
 library(sf)
- 
-bioclim_lookup <-  read.csv("data/bioclim_lookup.csv")
+
+bioclim_lookup <- read.csv("data/bioclim_lookup.csv")
 
 ui <- page_sidebar(
   title = "Species Distribution Model Generator",
@@ -105,7 +105,8 @@ server <- function(input, output, session) {
       presence_pts <- data.frame(
         species = data[[input$species_col]],
         lon = data[[input$lon_col]],
-        lat = data[[input$lat_col]]) %>%
+        lat = data[[input$lat_col]]
+      ) %>%
         st_as_sf(coords = c("lon", "lat"), crs = 4326)
 
       coords <- data %>%
@@ -127,7 +128,7 @@ server <- function(input, output, session) {
           bioclim_list <- list()
 
           bio <- unwrap(readRDS("data/bioclim_stack.RDS"))
-          
+
           clim_vars <- bioclim_lookup |> filter(defs %in% input$bioclim_vars)
 
           bio_filter <- bio[[c(clim_vars$bios)]]
@@ -217,7 +218,7 @@ server <- function(input, output, session) {
         pal = pal,
         values = c(0, 1),
         title = "Probability of Presence"
-      ) |> 
+      ) |>
       addLayersControl(overlayGroups = "observations")
   })
 
