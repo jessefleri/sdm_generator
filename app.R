@@ -6,8 +6,8 @@ library(ranger)
 library(leaflet)
 library(terra)
 library(sf)
-
-bioclim_lookup <- read.csv("data/bioclim_lookup.csv")
+ 
+bioclim_lookup <-  read.csv("data/bioclim_lookup.csv")
 
 ui <- page_sidebar(
   title = "Species Distribution Model Generator",
