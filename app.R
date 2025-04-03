@@ -226,19 +226,14 @@ server <- function(input, output, session) {
   output$variable_importance <- renderPlot({
     req(sdm_model())
 
-    # imp <- importance(rf_model)
-
     imp <- ranger::importance(sdm_model())
+
     imp_df <- data.frame(
       Variable = names(imp),
       Importance = imp
     )
 
-    # Create nicer labels for bioclim variables
-    var_labels <- names(imp)
-
-    imp_df$Label <- var_labels[imp_df$Variable]
-    imp_df$Label[is.na(imp_df$Label)] <- imp_df$Variable[is.na(imp_df$Label)]
+    imp_df <- imp_df |> left_join(bioclim_lookup, by = c("Variable" = "bios"))
 
     # Sort by importance
     imp_df <- imp_df[order(imp_df$Importance, decreasing = TRUE), ]
@@ -247,7 +242,7 @@ server <- function(input, output, session) {
     par(mar = c(8, 4, 2, 2))
     barplot(
       imp_df$Importance,
-      names.arg = imp_df$Label,
+      names.arg = imp_df$defs,
       las = 2,
       cex.names = 0.8,
       col = "steelblue",
